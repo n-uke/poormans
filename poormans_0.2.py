@@ -211,13 +211,7 @@ def compare_runs(current_bidders, current_winners, current_bids, current_vouches
         print_additional_info(file, epoch_number, set_size, pof_info, previous_pof_info)
 
         # Print bid info for qualified bidders
-        file.write("Qualified Bidders:\n")
-        file.write("-" * (addr_width + handle_width + bid_width + total_width + unlocked_width + locked_width + 8) + "\n")
-        file.write(header_format("Validator", "Handle", "Bid", "Total Balance", "Unlocked Balance", "Locked Balance", addr_width=addr_width, handle_width=handle_width, bid_width=bid_width, total_width=total_width, unlocked_width=unlocked_width, locked_width=locked_width))
-        file.write("-" * (addr_width + handle_width + bid_width + total_width + unlocked_width + locked_width + 8) + "\n")
-
-        # Print bid info for qualified bidders
-        file.write("Qualified Bidders:\n")
+        file.write("\n\nQualified Bidders:\n")
         file.write("-" * (addr_width + handle_width + bid_width + total_width + unlocked_width + locked_width + 8) + "\n")
         file.write(header_format("Validator", "Handle", "Bid", "Total Balance", "Unlocked Balance", "Locked Balance", addr_width=addr_width, handle_width=handle_width, bid_width=bid_width, total_width=total_width, unlocked_width=unlocked_width, locked_width=locked_width))
         file.write("-" * (addr_width + handle_width + bid_width + total_width + unlocked_width + locked_width + 8) + "\n")
@@ -903,7 +897,7 @@ def main():
     try:
         # Fetch bids for current qualified bidders in parallel
         with ThreadPoolExecutor() as executor:
-            futures = {executor.submit(query_validator_bid, address, current_epoch): address for address in qualified_bidders}
+            futures = {executor.submit(query_validator_bid, address, current_epoch): address for address in elligible_validators}
             for future in futures:
                 address = futures[future]
                 try:

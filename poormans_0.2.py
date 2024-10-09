@@ -164,37 +164,51 @@ def compare_runs(current_bidders, current_winners, current_bids, current_vouches
     previous_received_vouches = {addr: vouches.get("received_vouches", {}) for addr, vouches in previous_vouches.items()}
     previous_given_vouches = {addr: vouches.get("given_vouches", {}) for addr, vouches in previous_vouches.items()}
 
-    # Detect changes in received vouches
+    # Detect changes in received vouches (including epoch changes)
     changed_received_vouches = {}
     for address in current_received_vouches:
         if address in previous_received_vouches:
             previous_vouches = previous_received_vouches[address]
             current_vouches = current_received_vouches[address]
-            added_vouches = [vouch for vouch in current_vouches if vouch not in previous_vouches]
+    
+            # Added vouches include new vouches or vouches where the epoch has changed
+            added_vouches = [
+                vouch for vouch in current_vouches 
+                if vouch not in previous_vouches or current_vouches[vouch] != previous_vouches[vouch]
+            ]
+            
             removed_vouches = [vouch for vouch in previous_vouches if vouch not in current_vouches]
             expired_vouches = [vouch for vouch, vouch_epoch in previous_vouches.items()
                                if (epoch_number - int(vouch_epoch)) == 45]
+    
             if added_vouches or removed_vouches or expired_vouches:
                 changed_received_vouches[address] = {
-                   "added": added_vouches,
-                   "removed": removed_vouches,
-                   "expired": expired_vouches
+                    "added": added_vouches,
+                    "removed": removed_vouches,
+                    "expired": expired_vouches
                 }
                 print(f"DEBUG: Received vouches changed for {address}:")
-                print(f"DEBUG: Added: {added_vouches}")
+                print(f"DEBUG: Added (new or epoch changed): {added_vouches}")
                 print(f"DEBUG: Removed: {removed_vouches}")
                 print(f"DEBUG: Expired: {expired_vouches}")
-
-    # Detect changes in given vouches
+    
+    # Detect changes in given vouches (including epoch changes)
     changed_given_vouches = {}
     for address in current_given_vouches:
         if address in previous_given_vouches:
             previous_vouches = previous_given_vouches[address]
             current_vouches = current_given_vouches[address]
-            added_vouches = [vouch for vouch in current_vouches if vouch not in previous_vouches]
+    
+            # Added vouches include new vouches or vouches where the epoch has changed
+            added_vouches = [
+                vouch for vouch in current_vouches 
+                if vouch not in previous_vouches or current_vouches[vouch] != previous_vouches[vouch]
+            ]
+            
             removed_vouches = [vouch for vouch in previous_vouches if vouch not in current_vouches]
             expired_vouches = [vouch for vouch, vouch_epoch in previous_vouches.items()
                                if (epoch_number - int(vouch_epoch)) == 45]
+    
             if added_vouches or removed_vouches or expired_vouches:
                 changed_given_vouches[address] = {
                     "added": added_vouches,
@@ -202,7 +216,7 @@ def compare_runs(current_bidders, current_winners, current_bids, current_vouches
                     "expired": expired_vouches
                 }
                 print(f"DEBUG: Given vouches changed for {address}:")
-                print(f"DEBUG: Added: {added_vouches}")
+                print(f"DEBUG: Added (new or epoch changed): {added_vouches}")
                 print(f"DEBUG: Removed: {removed_vouches}")
                 print(f"DEBUG: Expired: {expired_vouches}")
                  

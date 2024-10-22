@@ -104,7 +104,6 @@ def compare_runs(current_bidders, current_winners, current_bids, current_vouches
         return f"{current_bid:,.2f}"
 
     # Determine the maximum width needed for each column
-    # Determine the maximum width needed for each column
     def calculate_max_widths(entries, balances, bids):
         max_total_width = 0
         max_unlocked_width = 0
@@ -952,14 +951,6 @@ def main():
         print_bid_info("Auction Winners", auction_winners, auction_bids)
     except Exception as e:
         print(f"Error printing bid information: {e}")
-
-    #try:
-        # Print vouches information
-        #print_vouches_info("Vouches Information", qualified_bidders)
-    #except Exception as e:
-        #print(f"Error printing vouches information: {e}")
-    #print(f"\n\nCUR VCH: {current_vouches}")
-    #print(f"\n\nPREV VCH: {previous_vouches}")
     
     # Sort the qualified bidders and auction winners by their bids in descending order
     sorted_qualified_bidders = sorted(qualified_bidders, key=lambda addr: current_bids.get(addr, 0), reverse=True)
@@ -1000,12 +991,6 @@ def main():
             pof_info=pof_info,
             filepath=current_filepath
         )
-         # Trigger file creation AFTER the main file is complete
-        with open("/home/ubuntu/libra-framework/epoch_data/trigger_file.txt", "w") as trigger_file:
-            # Write the current epoch into the trigger file
-            trigger_file.write(f"{current_epoch}")
-
-        print("Trigger file created. Waiting for bot to send the file.")
 
 
     except Exception as e:
